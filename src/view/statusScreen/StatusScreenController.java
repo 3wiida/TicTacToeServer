@@ -53,11 +53,21 @@ public class StatusScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         int playerStat[] = DataAccessObject.getPlayersStatistics();
-        ObservableList<PieChart.Data> pieChartData =
+        ObservableList<PieChart.Data> pieChartData;
+        if(playerStat[0] == 0 && playerStat[1] == 0){
+            pieChartData =
                 FXCollections.observableArrayList(
-                        new PieChart.Data("ONLINE PLAYERS", playerStat[0]),
-                        new PieChart.Data("OFFLINE PLAYERS",playerStat[1])
+                        new PieChart.Data("ONLINE PLAYERS", 5),//
+                        new PieChart.Data("OFFLINE PLAYERS",5)//
                 );
+        }else{
+                 pieChartData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data("ONLINE PLAYERS", playerStat[0]),//
+                        new PieChart.Data("OFFLINE PLAYERS",playerStat[1])//
+                );
+        }
+        
         pieChart.getData().addAll(pieChartData);
         onlineNumlbl.setText(String.valueOf(playerStat[0]));
         offlineNumlbl.setText(String.valueOf(playerStat[1]));

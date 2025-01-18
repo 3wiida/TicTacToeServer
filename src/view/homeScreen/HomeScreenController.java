@@ -74,7 +74,7 @@ public class HomeScreenController implements Initializable, Runnable {
                     new PlayerHandler(clientSocket);
                 }   
             } catch (IOException ex) {
-                System.out.println("error in run");
+                if(isRunning) System.out.println("error in run Home screen ");
                // Logger.getLogger(TicTacToeServer.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 stopServer();
