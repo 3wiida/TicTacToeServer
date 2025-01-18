@@ -17,26 +17,27 @@ import java.util.UUID;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  *
  * @author 3wiida
  */
-public class PlayerHandler extends Thread{
-    
+
+public class PlayerHandler extends Thread {
+
     private String id;
     private Socket clientSocket;
     private DataInputStream dis;
     private PrintStream ps;
-    
+
     private Vector<PlayerHandler> players = new Vector<>();
-    
 
     public PlayerHandler(Socket clientSocket) {
         try {
             this.clientSocket = clientSocket;
-            dis =  new DataInputStream(clientSocket.getInputStream());
+            dis = new DataInputStream(clientSocket.getInputStream());
             ps = new PrintStream(clientSocket.getOutputStream());
             players.add(this);
             start();
@@ -44,28 +45,47 @@ public class PlayerHandler extends Thread{
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
     @Override
-    public void run(){
-        while (true) {            
+    public void run() {
+        while (true) {
             try {
                 String msg = dis.readLine();
                 System.out.println(msg);
                 JSONObject requestJson = new JSONObject(msg);
                 String requestType = requestJson.getString("type");
-                
-                switch(requestType){
-                    case "login" : {
+
+                switch (requestType) {
+                    case "login": {
                         break;
                     }
-                    
+
                     case "register": {
                         handleRegisterRequest(requestJson);
                         break;
                     }
-                    
-                    case "get Avaliable users":{
+
+                    case "get Avaliable users": {
+                        try {
+                            ArrayList<Player> onlinePlayers = DataAccessObject.getOnlineUsers();
+                            JSONObject response = new JSONObject();
+                            JSONArray onlineUsers = new JSONArray();
+
+                            for (Player player : onlinePlayers) {
+                                JSONObject playerJson = new JSONObject();
+                                playerJson.put("username", player.getUsername());
+                                playerJson.put("password", player.getPassword());
+                                playerJson.put("status", player.getStatus());
+                                playerJson.put("score", player.getScore());
+                                onlineUsers.put(playerJson);
+                            }
+
+                            response.put("onlinePlayers", onlineUsers);
+                            ps.println(response.toString());
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
                         break;
                     }
                     
@@ -73,12 +93,12 @@ public class PlayerHandler extends Thread{
                         handleLogoutRequest();
                         break;
                     }
-                    default:{
+
+                    default: {
                         break;
                     }
                 }
-                
-                
+
             } catch (IOException ex) {
                 Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
