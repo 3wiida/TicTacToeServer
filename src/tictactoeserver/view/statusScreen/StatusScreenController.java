@@ -3,29 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view.homeScreen;
+package tictactoeserver.view.statusScreen;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 /**
  * FXML Controller class
  *
- * @author yasse
+ * @author Khaled
  */
-public class HomeScreenController implements Initializable {
+public class StatusScreenController implements Initializable {
 
     @FXML
-    private Label homelbl;
+    private Label headerlbl1;
     @FXML
-    private Button startbtn;
+    private Label headerlbl2;
     @FXML
-    private Label serverlbl;
+    private Button stopbtn;
+    @FXML
+    private Label statuslbl;
+    @FXML
+    private Label numlbl;
+    @FXML
+    private PieChart pieChart;
 
     /**
      * Initializes the controller class.
@@ -36,7 +43,7 @@ public class HomeScreenController implements Initializable {
     }    
 
     @FXML
-    private void onStartClicked(ActionEvent event) {
+    private void onStopClicked(ActionEvent event) {
     }
     
 }

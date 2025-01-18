@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dao;
+package tictactoeserver.dao;
 
-import dto.Player;
+import tictactoeserver.dto.Player;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -33,15 +33,23 @@ public class DataAccessObject {
     }
     
     public static boolean insertPlayer(Player player) throws SQLException{
-        PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO PLAYERS (NAME,PASSWORD,STATUS,SCORE) Values (?,?,?,?)");
-        insertStatement.setString(1,player.getUsername());
-        insertStatement.setString(2, player.getPassword());
-        insertStatement.setInt(3, player.getStatus());
-        insertStatement.setInt(4, player.getScore());
+        PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO PLAYERS (ID,NAME,PASSWORD,STATUS,SCORE) Values (?,?,?,?,?)");
+        insertStatement.setString(1,player.getId());
+        insertStatement.setString(2,player.getUsername());
+        insertStatement.setString(3, player.getPassword());
+        insertStatement.setInt(4, 1);
+        insertStatement.setInt(5, 0);
         return insertStatement.executeUpdate() > 0;
     }
     
     public static void getOnlineUsers(){
        
+    }
+    
+    public static boolean updateUserStatus(String id, int status) throws SQLException{
+        PreparedStatement updateStatement = connection.prepareStatement("UPDATE PLAYERS SET STATUS = ? WHERE ID = ?");
+        updateStatement.setInt(1, status);
+        updateStatement.setString(2, id);
+        return updateStatement.executeUpdate() > 0;
     }
 }
