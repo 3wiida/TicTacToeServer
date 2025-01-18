@@ -5,7 +5,6 @@
  */
 package dao;
 
-import dto.Player;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.derby.jdbc.ClientDriver;
+import tictactoeserver.dto.Player;
 
 /**
  *
@@ -51,12 +51,12 @@ public class DataAccessObject {
             ResultSet rs = stmnt.executeQuery();
 
             while (rs.next()) {
-                int id = rs.getInt("ID");
+                String id = rs.getString("ID");
                 String name = rs.getString("NAME");
                 String password = rs.getString("PASSWORD");
                 int status = rs.getInt("STATUS");
                 int score = rs.getInt("SCORE");
-                onlineUsers.add(new Player(name, password, status, score));
+                onlineUsers.add(new Player(id,name, password, status, score));
             }
         }
 
