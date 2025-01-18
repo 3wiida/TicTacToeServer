@@ -8,7 +8,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="814.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.statusScreen.StatusScreenController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="814.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.statusScreen.StatusScreenController">
     <stylesheets>
         <URL value="@statusscreen.css" />
     </stylesheets>
@@ -20,7 +20,7 @@
       </ImageView>
       <Label fx:id="headerlbl1" layoutX="185.0" layoutY="28.0" text="TIC TAC TEO" />
       <Label fx:id="headerlbl2" layoutX="275.0" layoutY="112.0" text="SERVER" />
-      <Button fx:id="stopbtn" layoutX="337.0" layoutY="209.0" mnemonicParsing="false" onAction="#onStopClicked" stylesheets="@serverstatusscreen.css" text="STOP" />
+      <Button fx:id="stopbtn" layoutX="337.0" layoutY="209.0" mnemonicParsing="false" onAction="#onStopClicked" text="STOP" />
       <ImageView fitHeight="44.0" fitWidth="40.0" layoutX="31.0" layoutY="380.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../assets/Ellipse%208.png" />
