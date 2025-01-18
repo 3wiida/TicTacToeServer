@@ -32,12 +32,12 @@ public class DataAccessObject {
         }
     }
     
-    public static boolean insertPlayer(Player player){
+    public static boolean insertPlayer(Player player) throws SQLException{
         PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO PLAYERS (NAME,PASSWORD,STATUS,SCORE) Values (?,?,?,?)");
         insertStatement.setString(1,player.getUsername());
         insertStatement.setString(2, player.getPassword());
-        insertStatement.setString(3, player.getStatus());
-        insertStatement.setString(4, player.getScore());
+        insertStatement.setInt(3, player.getStatus());
+        insertStatement.setInt(4, player.getScore());
         return insertStatement.executeUpdate() > 0;
     }
     
