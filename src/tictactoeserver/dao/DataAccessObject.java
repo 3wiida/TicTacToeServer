@@ -9,7 +9,9 @@ import tictactoeserver.dto.Player;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.derby.jdbc.ClientDriver;
@@ -42,8 +44,24 @@ public class DataAccessObject {
         return insertStatement.executeUpdate() > 0;
     }
     
-    public static void getOnlineUsers(){
-       
+     public static ArrayList<Player> getOnlineUsers() throws SQLException {
+        ArrayList<Player> onlineUsers = new ArrayList<>();
+        String query = "SELECT * FROM PLAYERS WHERE STATUS = 1";
+
+        try (PreparedStatement stmnt = connection.prepareStatement(query)) {
+            ResultSet rs = stmnt.executeQuery();
+
+            while (rs.next()) {
+                String id = rs.getString("ID");
+                String name = rs.getString("NAME");
+                String password = rs.getString("PASSWORD");
+                int status = rs.getInt("STATUS");
+                int score = rs.getInt("SCORE");
+                onlineUsers.add(new Player(id,name, password, status, score));
+            }
+        }
+
+        return onlineUsers;
     }
     
     public static boolean updateUserStatus(String id, int status) throws SQLException{
