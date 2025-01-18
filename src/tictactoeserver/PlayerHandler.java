@@ -5,10 +5,13 @@
  */
 package tictactoeserver;
 
+import dao.DataAccessObject;
+import dto.Player;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +56,14 @@ public class PlayerHandler extends Thread{
                 switch(requestType){
                     case "login" : {
                         break;
+                    }
+                    
+                    case "register": {
+                        
+                    }
+                    
+                    case "get Avaliable users":{
+                        
                     }
                     
                     default:{

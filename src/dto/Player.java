@@ -10,10 +10,10 @@ package dto;
  * @author 3wiida
  */
 public class Player {
-    String username;
-    String password;
-    int score;
-    int status;
+    private String username;
+    private String password;
+    private int score;
+    private int status;
 
     public Player(String username, String password, int score, int status) {
         this.username = username;

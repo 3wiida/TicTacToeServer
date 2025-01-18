@@ -5,8 +5,10 @@
  */
 package dao;
 
+import dto.Player;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,5 +30,18 @@ public class DataAccessObject {
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessObject.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static boolean insertPlayer(Player player){
+        PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO PLAYERS (NAME,PASSWORD,STATUS,SCORE) Values (?,?,?,?)");
+        insertStatement.setString(1,player.getUsername());
+        insertStatement.setString(2, player.getPassword());
+        insertStatement.setString(3, player.getStatus());
+        insertStatement.setString(4, player.getScore());
+        return insertStatement.executeUpdate() > 0;
+    }
+    
+    public static void getOnlineUsers(){
+       
     }
 }

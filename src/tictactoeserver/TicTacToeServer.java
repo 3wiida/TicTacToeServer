@@ -43,7 +43,7 @@ public class TicTacToeServer extends Application implements Runnable{
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();
-
+        
     }
 
    
