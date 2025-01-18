@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="814.0" stylesheets="@homescreen.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.homeScreen.HomeScreenController">
+   <children>
+      <ImageView fitHeight="600.0" fitWidth="814.0" pickOnBounds="true">
+         <image>
+            <Image url="@../../assets/background.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="homelbl" layoutX="192.0" layoutY="216.0" text="TIC TAC TEO" />
+      <Button fx:id="startbtn" layoutX="358.0" layoutY="409.0" mnemonicParsing="false" onAction="#onStartClicked" text="START" />
+      <Label fx:id="serverlbl" layoutX="282.0" layoutY="300.0" text="SERVER" />
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="319.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../assets/logo.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

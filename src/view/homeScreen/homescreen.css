@@ -1,0 +1,28 @@
+/*
+ * Written by khaled.
+ */
+
+#homelbl,
+#serverlbl{
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 60px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #225577, 10, 0.5, 2, 2);
+}
+
+#startbtn{
+    -fx-pref-width: 110px;
+    -fx-pref-height: 36px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-background-color: #009999;
+}
+
+#startbtn:hover{
+    -fx-background-color: #174242;
+}
