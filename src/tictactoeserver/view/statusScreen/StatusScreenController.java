@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view.statusScreen;
+package tictactoeserver.view.statusScreen;
 
-import dao.DataAccessObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,7 +23,8 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import view.homeScreen.HomeScreenController;
+import tictactoeserver.dao.DataAccessObject;
+import tictactoeserver.view.homeScreen.HomeScreenController;
 
 /**
  * FXML Controller class
@@ -79,7 +79,7 @@ public class StatusScreenController implements Initializable {
     }
     private void navigateToHomeScreen(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/homeScreen/HomeScreen.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/view/homeScreen/HomeScreen.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

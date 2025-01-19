@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view.homeScreen;
+package tictactoeserver.view.homeScreen;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -62,7 +62,6 @@ public class HomeScreenController implements Initializable, Runnable {
             navigateToStatusScreen(event);
         } catch (IOException ex) {
              System.out.println("error in start button");
-           // Logger.getLogger(TicTacToeServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -75,7 +74,6 @@ public class HomeScreenController implements Initializable, Runnable {
                 }   
             } catch (IOException ex) {
                 if(isRunning) System.out.println("error in run Home screen ");
-               // Logger.getLogger(TicTacToeServer.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 stopServer();
             }
@@ -83,7 +81,7 @@ public class HomeScreenController implements Initializable, Runnable {
     
     private void navigateToStatusScreen(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/statusScreen/StatusScreen.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/view/statusScreen/StatusScreen.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -91,25 +89,23 @@ public class HomeScreenController implements Initializable, Runnable {
             stage.show();
         } catch (IOException ex) {
             System.out.println("error in navigate to status func");
-           // Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, "Failed to navigate to status screen", ex);
         }
     }
     
     public static void stopServer(){
         isRunning = false;
+        
         if(serverSocket != null){
             try {
                 serverSocket.close();
                 System.out.println("stop server");
             } catch (IOException ex) {
                 System.out.println("error in stop server func");
-               // Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         if(thread != null){
             thread.stop();
         }
-        
     }
 
     

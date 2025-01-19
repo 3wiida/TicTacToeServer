@@ -16,39 +16,27 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import view.homeScreen.HomeScreenController;
-import view.statusScreen.StatusScreenController;
+import tictactoeserver.view.homeScreen.HomeScreenController;
 
 /**
- *
  * @author 3wiida
  */
 public class TicTacToeServer extends Application{
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/homeScreen/HomeScreen.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/view/homeScreen/HomeScreen.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.setOnCloseRequest((e)->{
-                try {
-                    HomeScreenController.serverSocket.close();
-                    HomeScreenController.thread.stop();
-                } catch (IOException ex) {
-                    System.out.println("error on set on close request");
-                }
+                    HomeScreenController.stopServer();
             });
             primaryStage.show();
         } catch (IOException ex) {
-            System.out.println("error in main file");
+            ex.printStackTrace();
         }
-        
-
     }
-
-   
-    
     public static void main(String[] args) {
         launch(args);
     }
