@@ -13,6 +13,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -32,8 +34,9 @@ public class PlayerHandler extends Thread {
     private DataInputStream dis;
     private PrintStream ps;
 
-    private Vector<PlayerHandler> players = new Vector<>();
-
+    private static Vector<PlayerHandler> players = new Vector<>();
+    
+    private static Map<String,PlayerHandler> playerMapping = new HashMap<>();
     public PlayerHandler(Socket clientSocket) {
         try {
             this.clientSocket = clientSocket;
@@ -93,7 +96,8 @@ public class PlayerHandler extends Thread {
                         handleLogoutRequest();
                         break;
                     }
-
+                    case "move": 
+                        handlePlayerMove(requestJson);
                     default: {
                         break;
                     }
@@ -144,6 +148,11 @@ public class PlayerHandler extends Thread {
         JSONObject logoutResponse = new JSONObject();
         logoutResponse.put("isOk", isLogoutSuccess);
         ps.println(logoutResponse.toString());
+    }
+    
+    private void handlePlayerMove(JSONObject requestJson){
+        
+        
     }
     
 }
