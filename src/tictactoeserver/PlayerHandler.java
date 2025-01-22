@@ -24,7 +24,6 @@ import org.json.JSONObject;
  *
  * @author 3wiida
  */
-
 public class PlayerHandler extends Thread {
 
     private String id;
