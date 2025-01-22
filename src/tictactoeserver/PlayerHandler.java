@@ -30,6 +30,7 @@ import org.json.JSONObject;
 public class PlayerHandler extends Thread {
 
     private String id;
+    private String username;
     private Socket clientSocket;
     private DataInputStream dis;
     private PrintStream ps;
@@ -82,13 +83,34 @@ public class PlayerHandler extends Thread {
                                 playerJson.put("score", player.getScore());
                                 onlineUsers.put(playerJson);
                             }
-
+                            response.put("type", "onlinePlayers");
                             response.put("onlinePlayers", onlineUsers);
+                            System.out.println(response.toString());
                             ps.println(response.toString());
                         } catch (SQLException ex) {
                             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
+                        break;
+                    }
+                    
+                    case "invite": {
+                        handleInvitationRequest(requestJson);
+                        break;
+                    }
+                    
+                    case "invitationRejected":{
+                        handleInvitationRejectedRequest(requestJson);
+                        break;
+                    }
+                    
+                    case "invitationAccecpted":{
+                        handleInvitationAccecptedRequest(requestJson);
+                        break;
+                    }
+                    
+                    case "invitationCanceled": {
+                        handleInvitationCanceled(requestJson);
                         break;
                     }
                     
@@ -109,6 +131,8 @@ public class PlayerHandler extends Thread {
         }
     }
     
+    
+    /* Register Operations */
     private void handleRegisterRequest(JSONObject request){
         try {
             String id = UUID.randomUUID().toString();
@@ -116,7 +140,10 @@ public class PlayerHandler extends Thread {
             String password = request.getString("password");
             Player player = new Player(id, username, password, 0, 1);
             boolean isInsertionSuccess = DataAccessObject.insertPlayer(player);
-            if(isInsertionSuccess) this.id = id;
+            if(isInsertionSuccess) {
+                this.id = id;
+                this.username = username;
+            }
             sendRegisterResponse(isInsertionSuccess, username);
         } catch (SQLException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,12 +155,15 @@ public class PlayerHandler extends Thread {
         JSONObject registerResonse = new JSONObject();
         registerResonse.put("isOk", isSuccess);
         registerResonse.put("username", username);
+        registerResonse.put("id", id);
         if(!isSuccess){
             registerResonse.put("error", "User is already exists");
         }
         ps.println(registerResonse.toString());
     }
     
+    
+    /* Logout Operations */
     private void handleLogoutRequest(){
         try {
             boolean isLogoutSuccess = DataAccessObject.updateUserStatus(id, 0);
@@ -151,8 +181,96 @@ public class PlayerHandler extends Thread {
     }
     
     private void handlePlayerMove(JSONObject requestJson){
+        String toOpponentUser = requestJson.getString("to");
+        String fromUser = requestJson.getString("from");
         
-        
+        playerMapping.entrySet().stream().map((player) -> player.getKey()).forEachOrdered((userName) -> {
+            if(userName.equals(toOpponentUser)){
+                JSONObject moveJSON = new JSONObject();
+                moveJSON.put("type", "move");
+                moveJSON.put("turn",requestJson.getString("turn").charAt(0));
+                moveJSON.put("row", requestJson.getInt("row"));
+                moveJSON.put("col", requestJson.getInt("col"));
+                moveJSON.put("from", requestJson.getString("from"));
+                ps.println(moveJSON.toString());
+            } else {
+            }
+        });
     }
     
+    
+    
+    /* Invitation System */
+    private void handleInvitationRequest(JSONObject invitation){
+        String opponentUsername = invitation.getString("opponentUsername");
+        for(PlayerHandler player : players){
+            System.out.println(player.username);
+            if(player.username.equals(opponentUsername)){
+                sendInvitationToOpponent(this, player);
+                break;
+            }
+        }   
+    }
+    
+    private void sendInvitationToOpponent(PlayerHandler host, PlayerHandler opponent){
+        JSONObject invitation = new JSONObject();
+        invitation.put("type", "invitationRecieved");
+        invitation.put("hostUsername", host.username);
+        invitation.put("hostId", host.id);
+        invitation.put("hostScore", 350);
+        System.out.println("invitation is => " + invitation.toString());
+        opponent.ps.println(invitation.toString());
+    }
+    
+    private void handleInvitationRejectedRequest(JSONObject rejection){
+        String opponent = rejection.getString("from");
+        String host = rejection.getString("to");
+        for(PlayerHandler player : players){
+            if(player.username.equals(host)){
+                sendRejectionToHost(opponent, player);
+                break;
+            }
+        }   
+    }
+    
+    private void sendRejectionToHost(String opponent, PlayerHandler host){
+        JSONObject rejection = new JSONObject();
+        rejection.put("type", "invitationRejected");
+        rejection.put("from", opponent);
+        host.ps.println(rejection.toString());
+    }
+    
+    private void handleInvitationAccecptedRequest(JSONObject confirmation){
+        String host = confirmation.getString("to");
+        JSONObject opponentData = confirmation.getJSONObject("opponent");
+        for(PlayerHandler player : players){
+            if(player.username.equals(host)){
+                sendAcceptanceToHost(opponentData, player);
+                break;
+            }
+        }
+    }
+    
+    private void sendAcceptanceToHost(JSONObject opponentData, PlayerHandler host){
+        JSONObject accecptance = new JSONObject();
+        accecptance.put("type", "invitationAccecpted");
+        accecptance.put("opponent", opponentData);
+        host.ps.println(accecptance.toString());
+    }
+    
+    private void handleInvitationCanceled(JSONObject cancelation){
+        String opponent = cancelation.getString("to");
+        for(PlayerHandler player : players){
+            if(player.username.equals(opponent)){
+                sendCancelToOpponent(player);
+                break;
+            }
+        }
+    }
+    
+    private void sendCancelToOpponent(PlayerHandler player){
+        JSONObject cancelation = new JSONObject();
+        cancelation.put("type", "invitationCanceled");
+        player.ps.println(cancelation.toString());
+    }
 }
