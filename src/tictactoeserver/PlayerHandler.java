@@ -97,8 +97,16 @@ public class PlayerHandler extends Thread {
                         handleLogoutRequest();
                         break;
                     }
+                    
                     case "move": 
                         handlePlayerMove(requestJson);
+                        break;
+                        
+                    case "withdrawal":{
+                        handleWithdrawalRequest(requestJson);
+                        break;
+                    }    
+                    
                     default: {
                         break;
                     }
@@ -208,7 +216,6 @@ public class PlayerHandler extends Thread {
     }
     
     
-    
     /* Invitation System */
     private void handleInvitationRequest(JSONObject invitation) {
         String opponentUsername = invitation.getString("opponentUsername");
@@ -289,6 +296,21 @@ public class PlayerHandler extends Thread {
         JSONObject cancelation = new JSONObject();
         cancelation.put("type", "invitationCanceled");
         player.ps.println(cancelation.toString());
+    }
+    
+    private void handleWithdrawalRequest(JSONObject withdrawal){
+        String opponentUsername = withdrawal.getString("to");
+        for(PlayerHandler player : players){
+            if(player.username.equals(opponentUsername)){
+                sendWithdrawalToOpponent(player);
+            }
+        }
+    }
+    
+    private void sendWithdrawalToOpponent(PlayerHandler player){
+        JSONObject withdrawal = new JSONObject();
+        withdrawal.put("type", "withdrawal");
+        player.ps.println(withdrawal.toString());
     }
 
     public static void broadcastMessage(String message) {
