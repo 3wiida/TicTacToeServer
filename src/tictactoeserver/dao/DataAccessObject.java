@@ -59,6 +59,7 @@ public class DataAccessObject {
             ResultSet rs = stmnt.executeQuery();
 
             while (rs.next()) {
+                
                 String id = rs.getString("ID");
                 String name = rs.getString("NAME");
                 String password = rs.getString("PASSWORD");
