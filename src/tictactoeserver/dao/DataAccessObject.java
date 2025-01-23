@@ -72,12 +72,20 @@ public class DataAccessObject {
         return onlineUsers;
     }
     
-    public static boolean updateUserStatus(String id, int status) throws SQLException{
+    public static boolean updateUserStatusById(String id, int status) throws SQLException{
         PreparedStatement updateStatement = connection.prepareStatement("UPDATE PLAYERS SET STATUS = ? WHERE ID = ?");
         updateStatement.setInt(1, status);
         updateStatement.setString(2, id);
         return updateStatement.executeUpdate() > 0;
     }
+    
+    public static boolean updateUserStatusByUsername(String username, int status) throws SQLException{
+        PreparedStatement updateStatement = connection.prepareStatement("UPDATE PLAYERS SET STATUS = ? WHERE NAME = ?");
+        updateStatement.setInt(1, status);
+        updateStatement.setString(2, username);
+        return updateStatement.executeUpdate() > 0;
+    }
+  
     
     public static int[] getPlayersStatistics(){
         int onlinePlayers = 0, offlinePlayers = 0;

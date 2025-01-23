@@ -66,28 +66,7 @@ public class PlayerHandler extends Thread {
                     }
 
                     case "get Avaliable users": {
-                        try {
-                            ArrayList<Player> onlinePlayers = DataAccessObject.getOnlineUsers();
-                            JSONObject response = new JSONObject();
-                            JSONArray onlineUsers = new JSONArray();
-
-                            for (Player player : onlinePlayers) {
-                                if (id .equals(player.getId())) continue;
-                                JSONObject playerJson = new JSONObject();
-                                playerJson.put("username", player.getUsername());
-                                playerJson.put("password", player.getPassword());
-                                playerJson.put("status", player.getStatus());
-                                playerJson.put("score", player.getScore());
-                                onlineUsers.put(playerJson);
-                            }
-                            response.put("type", "onlinePlayers");
-                            response.put("onlinePlayers", onlineUsers);
-                            System.out.println(response.toString());
-                            ps.println(response.toString());
-                        } catch (SQLException ex) {
-                            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
+                        handleGetAvilablePlayersRequest();
                         break;
                     }
 
@@ -160,8 +139,12 @@ public class PlayerHandler extends Thread {
     /* Logout Operations */
     private void handleLogoutRequest() {
         try {
-            boolean isLogoutSuccess = DataAccessObject.updateUserStatus(id, 0);
+            boolean isLogoutSuccess = DataAccessObject.updateUserStatusById(id, 0);
+            System.out.println("logout => " + isLogoutSuccess);
             sendLogoutResponse(isLogoutSuccess);
+            if(isLogoutSuccess){
+                players.remove(this);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
             sendLogoutResponse(false);
@@ -173,7 +156,31 @@ public class PlayerHandler extends Thread {
         logoutResponse.put("isOk", isLogoutSuccess);
         ps.println(logoutResponse.toString());
     }
+    
+    private void handleGetAvilablePlayersRequest(){
+        try {
+            ArrayList<Player> onlinePlayers = DataAccessObject.getOnlineUsers();
+            JSONObject response = new JSONObject();
+            JSONArray onlineUsers = new JSONArray();
 
+            for (Player player : onlinePlayers) {
+                if (id .equals(player.getId())) continue;
+                    JSONObject playerJson = new JSONObject();
+                    playerJson.put("username", player.getUsername());
+                    playerJson.put("password", player.getPassword());
+                    playerJson.put("status", player.getStatus());
+                    playerJson.put("score", player.getScore());
+                    onlineUsers.put(playerJson);
+                }
+                response.put("type", "onlinePlayers");
+                response.put("onlinePlayers", onlineUsers);
+                System.out.println(response.toString());
+                ps.println(response.toString());
+        } catch (SQLException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /* Invitation System */
     private void handleInvitationRequest(JSONObject invitation) {
         String opponentUsername = invitation.getString("opponentUsername");
@@ -223,6 +230,14 @@ public class PlayerHandler extends Thread {
                 break;
             }
         }
+        try {
+            String opponentUsername = opponentData.getString("opponentUsername");
+            DataAccessObject.updateUserStatusByUsername(opponentUsername, 2);
+            DataAccessObject.updateUserStatusByUsername(host, 2);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
     }
 
     private void sendAcceptanceToHost(JSONObject opponentData, PlayerHandler host) {
