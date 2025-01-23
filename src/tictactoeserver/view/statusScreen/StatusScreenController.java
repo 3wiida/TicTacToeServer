@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tictactoeserver.view.statusScreen;
 
 import java.io.IOException;
@@ -10,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,11 +22,6 @@ import javafx.stage.Stage;
 import tictactoeserver.dao.DataAccessObject;
 import tictactoeserver.view.homeScreen.HomeScreenController;
 
-/**
- * FXML Controller class
- *
- * @author Khaled
- */
 public class StatusScreenController implements Initializable {
     @FXML
     private Label headerlbl1;
@@ -49,34 +40,43 @@ public class StatusScreenController implements Initializable {
     @FXML
     private Label offlineNumlbl;
 
+    private boolean stopUpdating = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        int playerStat[] = DataAccessObject.getPlayersStatistics();
-        ObservableList<PieChart.Data> pieChartData;
-        if(playerStat[0] == 0 && playerStat[1] == 0){
-            pieChartData =
-                FXCollections.observableArrayList(
-                        new PieChart.Data("ONLINE PLAYERS", 5),//
-                        new PieChart.Data("OFFLINE PLAYERS",5)//
-                );
-        }else{
-                 pieChartData =
-                FXCollections.observableArrayList(
-                        new PieChart.Data("ONLINE PLAYERS", playerStat[0]),//
-                        new PieChart.Data("OFFLINE PLAYERS",playerStat[1])//
-                );
-        }
-        
-        pieChart.getData().addAll(pieChartData);
-        onlineNumlbl.setText(String.valueOf(playerStat[0]));
-        offlineNumlbl.setText(String.valueOf(playerStat[1]));
+        updatePieChart();
+        new Thread(()->{
+                try {
+                    while (!stopUpdating) {
+                        Thread.sleep(3000); 
+                        Platform.runLater(() -> this.updatePieChart());
+                    }
+                } catch (InterruptedException e) {
+                    Logger.getLogger(StatusScreenController.class.getName()).log(Level.SEVERE, null, e);
+                }
+            
+        }).start();
     }
+
+    private void updatePieChart() {
+        int[] playerStats = DataAccessObject.getPlayersStatistics();
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("ONLINE PLAYERS", playerStats[0]),
+                new PieChart.Data("OFFLINE PLAYERS", playerStats[1])
+        );
+
+        pieChart.setData(pieChartData);
+        onlineNumlbl.setText(String.valueOf(playerStats[0]));
+        offlineNumlbl.setText(String.valueOf(playerStats[1]));
+    }
+
     @FXML
     private void onStopClicked(ActionEvent event) {
+        stopUpdating = true; 
         HomeScreenController.stopServer();
         navigateToHomeScreen(event);
     }
+
     private void navigateToHomeScreen(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/view/homeScreen/HomeScreen.fxml"));
