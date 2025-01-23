@@ -36,7 +36,7 @@ public class PlayerHandler extends Thread {
 
     private static Vector<PlayerHandler> players = new Vector<>();
     
-    private static Map<String,PlayerHandler> playerMapping = new HashMap<>();
+    private static HashMap<String,PlayerHandler> playerMapping = new HashMap<>();
     public PlayerHandler(Socket clientSocket) {
         try {
             this.clientSocket = clientSocket;
@@ -121,6 +121,7 @@ public class PlayerHandler extends Thread {
             if (isInsertionSuccess) {
                 this.id = id;
                 this.username = username;
+                playerMapping.put(username, this);
             }
             sendRegisterResponse(isInsertionSuccess, username);
         } catch (SQLException ex) {
@@ -185,21 +186,25 @@ public class PlayerHandler extends Thread {
         }
     }
     private void handlePlayerMove(JSONObject requestJson){
+        System.out.println("enter handle player move");
         String toOpponentUser = requestJson.getString("to");
         String fromUser = requestJson.getString("from");
         
-        playerMapping.entrySet().stream().map((player) -> player.getKey()).forEachOrdered((userName) -> {
-            if(userName.equals(toOpponentUser)){
+        for (Map.Entry<String, PlayerHandler> me : playerMapping.entrySet()) {
+         
+            if(me.getKey().equals(toOpponentUser)){
+                System.out.println("to => "+ toOpponentUser + "  from => "+ fromUser);
+                System.out.println("found the player to send move");
                 JSONObject moveJSON = new JSONObject();
                 moveJSON.put("type", "move");
-                moveJSON.put("turn",requestJson.getString("turn").charAt(0));
+                moveJSON.put("turn",requestJson.getString("turn"));
                 moveJSON.put("row", requestJson.getInt("row"));
                 moveJSON.put("col", requestJson.getInt("col"));
                 moveJSON.put("from", requestJson.getString("from"));
-                ps.println(moveJSON.toString());
-            } else {
+                System.out.println("move json => " + moveJSON);
+                me.getValue().ps.println(moveJSON.toString());
             }
-        });
+        }
     }
     
     
