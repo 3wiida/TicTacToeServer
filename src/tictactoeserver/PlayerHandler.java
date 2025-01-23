@@ -13,6 +13,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -33,7 +35,8 @@ public class PlayerHandler extends Thread {
     private PrintStream ps;
 
     private static Vector<PlayerHandler> players = new Vector<>();
-
+    
+    private static Map<String,PlayerHandler> playerMapping = new HashMap<>();
     public PlayerHandler(Socket clientSocket) {
         try {
             this.clientSocket = clientSocket;
@@ -94,7 +97,8 @@ public class PlayerHandler extends Thread {
                         handleLogoutRequest();
                         break;
                     }
-
+                    case "move": 
+                        handlePlayerMove(requestJson);
                     default: {
                         break;
                     }
@@ -180,6 +184,25 @@ public class PlayerHandler extends Thread {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    private void handlePlayerMove(JSONObject requestJson){
+        String toOpponentUser = requestJson.getString("to");
+        String fromUser = requestJson.getString("from");
+        
+        playerMapping.entrySet().stream().map((player) -> player.getKey()).forEachOrdered((userName) -> {
+            if(userName.equals(toOpponentUser)){
+                JSONObject moveJSON = new JSONObject();
+                moveJSON.put("type", "move");
+                moveJSON.put("turn",requestJson.getString("turn").charAt(0));
+                moveJSON.put("row", requestJson.getInt("row"));
+                moveJSON.put("col", requestJson.getInt("col"));
+                moveJSON.put("from", requestJson.getString("from"));
+                ps.println(moveJSON.toString());
+            } else {
+            }
+        });
+    }
+    
+    
     
     /* Invitation System */
     private void handleInvitationRequest(JSONObject invitation) {
