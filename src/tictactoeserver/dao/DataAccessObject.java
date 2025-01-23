@@ -22,19 +22,19 @@ import org.apache.derby.jdbc.ClientDriver;
  */
 public class DataAccessObject {
     private static Connection connection;
-    static ResultSet onlineResult;
-    static ResultSet offlineResult;
+//    static ResultSet onlineResult;
+//    static ResultSet offlineResult;
     static{
         try {
             DriverManager.registerDriver(new ClientDriver());
             connection = DriverManager.getConnection("jdbc:derby://localhost:1527/TicTacToeDatabase", "root", "root");
              /* عشان الابديت بتاع ال pie chart */
-            String onlinePlayerQuery = "SELECT COUNT(*) AS ONLINE_COUNT FROM PLAYERS WHERE STATUS IS NOT NULL AND STATUS = 1 ";
-            String offlinePlayersQuery = "SELECT COUNT(*) AS OFFLINE_COUNT FROM PLAYERS WHERE STATUS IS NOT NULL AND STATUS = 0";
-            PreparedStatement onlineStat = connection.prepareStatement(onlinePlayerQuery,ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
-            PreparedStatement offlineStat = connection.prepareStatement(offlinePlayersQuery,ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
-            onlineResult = onlineStat.executeQuery();
-            offlineResult = offlineStat.executeQuery();
+//            String onlinePlayerQuery = "SELECT COUNT(*) AS ONLINE_COUNT FROM PLAYERS WHERE STATUS IS NOT NULL AND STATUS = 1 ";
+//            String offlinePlayersQuery = "SELECT COUNT(*) AS OFFLINE_COUNT FROM PLAYERS WHERE STATUS IS NOT NULL AND STATUS = 0";
+//            PreparedStatement onlineStat = connection.prepareStatement(onlinePlayerQuery,ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
+//            PreparedStatement offlineStat = connection.prepareStatement(offlinePlayersQuery,ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE);
+//            onlineResult = onlineStat.executeQuery();
+//            offlineResult = offlineStat.executeQuery();
       
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessObject.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,19 +87,27 @@ public class DataAccessObject {
     }
   
     
-    public static int[] getPlayersStatistics(){
+    public static int[] getPlayersStatistics() {
         int onlinePlayers = 0, offlinePlayers = 0;
-        if(connection != null){
+        if (connection != null) {
             try {
-                if(onlineResult.next()){
-                    onlinePlayers = onlineResult.getInt("ONLINE_COUNT");
-                }
-                if(offlineResult.next()){
-                    offlinePlayers = offlineResult.getInt("OFFLINE_COUNT");
+                String onlineQuery = "SELECT COUNT(*) AS ONLINE_COUNT FROM PLAYERS WHERE STATUS = 1";
+                String offlineQuery = "SELECT COUNT(*) AS OFFLINE_COUNT FROM PLAYERS WHERE STATUS = 0";
+
+                try (PreparedStatement onlineStat = connection.prepareStatement(onlineQuery);
+                     PreparedStatement offlineStat = connection.prepareStatement(offlineQuery)) {
+                    ResultSet onlineResult = onlineStat.executeQuery();
+                    ResultSet offlineResult = offlineStat.executeQuery();
+
+                    if (onlineResult.next()) {
+                        onlinePlayers = onlineResult.getInt("ONLINE_COUNT");
+                    }
+                    if (offlineResult.next()) {
+                        offlinePlayers = offlineResult.getInt("OFFLINE_COUNT");
+                    }
                 }
             } catch (SQLException ex) {
-                System.err.println("Error in access getPlayersStatistics ");
-               //Logger.getLogger(DataAccessObject.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Error in getPlayersStatistics");
             }
         }
         return new int[]{onlinePlayers, offlinePlayers};
