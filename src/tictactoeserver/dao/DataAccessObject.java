@@ -47,7 +47,7 @@ public class DataAccessObject {
         insertStatement.setString(2,player.getUsername());
         insertStatement.setString(3, player.getPassword());
         insertStatement.setInt(4, 1);
-        insertStatement.setInt(5, 0);
+        insertStatement.setInt(5, 500);
         return insertStatement.executeUpdate() > 0;
     }
     
@@ -99,7 +99,7 @@ public class DataAccessObject {
         int onlinePlayers = 0, offlinePlayers = 0;
         if (connection != null) {
             try {
-                String onlineQuery = "SELECT COUNT(*) AS ONLINE_COUNT FROM PLAYERS WHERE STATUS = 1";
+                String onlineQuery = "SELECT COUNT(*) AS ONLINE_COUNT FROM PLAYERS WHERE STATUS = 1 OR STATUS = 2";
                 String offlineQuery = "SELECT COUNT(*) AS OFFLINE_COUNT FROM PLAYERS WHERE STATUS = 0";
 
                 try (PreparedStatement onlineStat = connection.prepareStatement(onlineQuery);
