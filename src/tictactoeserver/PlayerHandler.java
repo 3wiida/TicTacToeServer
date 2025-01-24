@@ -302,9 +302,19 @@ public class PlayerHandler extends Thread {
     
     private void handleWithdrawalRequest(JSONObject withdrawal){
         String opponentUsername = withdrawal.getString("to");
+        try {
+            DataAccessObject.updateUserStatusByUsername(username, 1);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         for(PlayerHandler player : players){
             if(player.username.equals(opponentUsername)){
                 sendWithdrawalToOpponent(player);
+                try {
+                    DataAccessObject.updateUserStatusByUsername(opponentUsername, 1);
+                } catch (SQLException ex) {
+                   ex.printStackTrace();
+                }
             }
         }
     }
