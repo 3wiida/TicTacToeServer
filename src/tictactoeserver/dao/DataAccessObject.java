@@ -124,7 +124,7 @@ public class DataAccessObject {
     public static void updateScoreByUserNameAndID(String name, String id) {
         if (connection != null) {
             try {
-                String SQL = "UPDATE PLAYERS SET SCORE = SCORE + 1 WHERE NAME = ? AND ID = ?";
+                String SQL = "UPDATE PLAYERS SET SCORE = SCORE + 10 WHERE NAME = ? AND ID = ?";
                 PreparedStatement updateStatement = connection.prepareStatement(SQL);
                 updateStatement.setString(1, name);
                 updateStatement.setString(2, id);
@@ -160,6 +160,19 @@ public class DataAccessObject {
             }
         }
         return null;
+    }
+    
+    public static void decreaseScoreByNameAndId(String name, String id){
+        try {
+            String sql = "UPDATE PLAYERS SET SCORE = SCORE - 10 WHERE NAME = ? AND ID = ?";
+            PreparedStatement statement = connection.prepareCall(sql);
+            statement.setString(1, name);
+            statement.setString(2, id);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccessObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
    
 }

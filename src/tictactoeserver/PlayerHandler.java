@@ -110,8 +110,13 @@ public class PlayerHandler extends Thread {
                         handleWithdrawalRequest(requestJson);
                         break;
                     }
-                    case "update_score":{
+                    case "increase_score":{
                         handleUpdateScoreRequest(requestJson);
+                        break;
+                    }
+                    case "decrease_score": {
+                        handleDecreaseScoreRequest(requestJson);
+                        break;
                     }
                     
                     default: {
@@ -415,5 +420,16 @@ public class PlayerHandler extends Thread {
         }
 
         ps.println(loginResponse.toString());
+    }
+    
+    
+    private void handleDecreaseScoreRequest(JSONObject requestJson){
+        try{
+            String name = requestJson.getString("name");
+            String id = requestJson.getString("id");
+            DataAccessObject.decreaseScoreByNameAndId(name, id);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
