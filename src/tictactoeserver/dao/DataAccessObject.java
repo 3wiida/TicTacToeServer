@@ -113,5 +113,19 @@ public class DataAccessObject {
         return new int[]{onlinePlayers, offlinePlayers};
     }
     
+    public static void updateScoreByUserNameAndID(String name, String id){
+        if(connection != null){
+            try {
+                String SQL = "UPDATE PLAYERS SET SCORE += 1 WHERE NAME = ? AND ID = ?";
+                PreparedStatement updateStatement = connection.prepareStatement(SQL);
+                updateStatement.setString(1, name);
+                updateStatement.setString(2,id);
+                updateStatement.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("can not update score");
+            }
+        }
+    }
+    
    
 }

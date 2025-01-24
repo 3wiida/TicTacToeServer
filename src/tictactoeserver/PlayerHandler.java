@@ -98,14 +98,17 @@ public class PlayerHandler extends Thread {
                         break;
                     }
                     
-                    case "move": 
+                    case "move": {
                         handlePlayerMove(requestJson);
                         break;
-                        
+                    }
                     case "withdrawal":{
                         handleWithdrawalRequest(requestJson);
                         break;
-                    }    
+                    }
+                    case "update_score":{
+                        handleUpdateScoreRequest(requestJson);
+                    }
                     
                     default: {
                         break;
@@ -199,7 +202,6 @@ public class PlayerHandler extends Thread {
         String fromUser = requestJson.getString("from");
         
         for (Map.Entry<String, PlayerHandler> me : playerMapping.entrySet()) {
-         
             if(me.getKey().equals(toOpponentUser)){
                 System.out.println("to => "+ toOpponentUser + "  from => "+ fromUser);
                 System.out.println("found the player to send move");
@@ -341,5 +343,12 @@ public class PlayerHandler extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void handleUpdateScoreRequest(JSONObject requestJson){
+        System.out.println("enter update user");
+        String userName = requestJson.getString("name");
+        String id = requestJson.getString("id");
+        DataAccessObject.updateScoreByUserNameAndID(userName, id);
     }
 }
