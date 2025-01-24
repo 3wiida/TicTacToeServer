@@ -63,6 +63,7 @@ public class PlayerHandler extends Thread {
 
                 switch (requestType) {
                     case "login": {
+                        handleLoginRequest(requestJson);
                         break;
                     }
 
@@ -119,7 +120,6 @@ public class PlayerHandler extends Thread {
                 }
 
             } catch (IOException ex) {
-                Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
                 closeConnection();
             } catch (Exception ex){
                 closeConnection();
@@ -133,7 +133,7 @@ public class PlayerHandler extends Thread {
             String id = UUID.randomUUID().toString();
             String username = request.getString("username");
             String password = request.getString("password");
-            Player player = new Player(id, username, password, 0, 1);
+            Player player = new Player(id, username, password, 500, 1);
             boolean isInsertionSuccess = DataAccessObject.insertPlayer(player);
             if (isInsertionSuccess) {
                 this.id = id;
@@ -309,6 +309,7 @@ public class PlayerHandler extends Thread {
         String opponentUsername = withdrawal.getString("to");
         try {
             DataAccessObject.updateUserStatusByUsername(username, 1);
+            DataAccessObject.updatePlayerScore(username, -10);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -317,6 +318,7 @@ public class PlayerHandler extends Thread {
                 sendWithdrawalToOpponent(player);
                 try {
                     DataAccessObject.updateUserStatusByUsername(opponentUsername, 1);
+                    DataAccessObject.updatePlayerScore(opponentUsername, 10);
                 } catch (SQLException ex) {
                    ex.printStackTrace();
                 }
@@ -338,8 +340,19 @@ public class PlayerHandler extends Thread {
 
     public static void closeAllConnections() {
         for (PlayerHandler player : players) {
-            player.closeConnection();
-            System.err.println("u are down");
+            JSONObject closeSignal = new JSONObject();
+            closeSignal.put("type", "serverClosed");
+            player.ps.println(closeSignal);
+            try {
+                DataAccessObject.updateUserStatusById(player.id, 0);
+                player.clientSocket.close();
+                player.ps.close();
+                player.dis.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         players.clear();
     }
@@ -366,5 +379,41 @@ public class PlayerHandler extends Thread {
         String userName = requestJson.getString("name");
         String id = requestJson.getString("id");
         DataAccessObject.updateScoreByUserNameAndID(userName, id);
+    }
+    private void handleLoginRequest(JSONObject requestJson) {
+        try {
+            String username = requestJson.getString("username");
+            String password = requestJson.getString("password");
+
+            Player player = DataAccessObject.authenticateUser(username, password);
+            if (player != null) {
+                this.id = player.getId();
+                this.username = player.getUsername();
+                boolean isStatusUpdated = DataAccessObject.updateUserStatusById(id, 1);
+                playerMapping.put(username, this);
+                sendLoginResponse(true, player, isStatusUpdated);
+            } else {
+                sendLoginResponse(false, null, false);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            sendLoginResponse(false, null, false);
+        }
+    }
+    
+    private void sendLoginResponse(boolean isSuccess, Player player, boolean isStatusUpdated) {
+        JSONObject loginResponse = new JSONObject();
+        loginResponse.put("isOk", isSuccess);
+
+        if (isSuccess && isStatusUpdated) {
+            loginResponse.put("id", player.getId());
+            loginResponse.put("username", player.getUsername());
+            loginResponse.put("score", player.getScore());
+            loginResponse.put("status", player.getStatus());
+        } else {
+            loginResponse.put("error", "Invalid credentials or status update failed");
+        }
+
+        ps.println(loginResponse.toString());
     }
 }
