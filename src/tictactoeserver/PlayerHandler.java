@@ -147,7 +147,7 @@ public class PlayerHandler extends Thread {
             }
             sendRegisterResponse(isInsertionSuccess, username);
         } catch (SQLException ex) {
-            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
             sendRegisterResponse(false, null);
         }
     }
@@ -384,6 +384,11 @@ public class PlayerHandler extends Thread {
         String userName = requestJson.getString("name");
         String id = requestJson.getString("id");
         DataAccessObject.updateScoreByUserNameAndID(userName, id);
+        try {
+            DataAccessObject.updateUserStatusById(id, 1);
+        } catch (SQLException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     private void handleLoginRequest(JSONObject requestJson) {
         try {
@@ -392,6 +397,7 @@ public class PlayerHandler extends Thread {
 
             Player player = DataAccessObject.authenticateUser(username, password);
             if (player != null) {
+                System.out.println("player score => "+ player.getScore());
                 this.id = player.getId();
                 this.username = player.getUsername();
                 boolean isStatusUpdated = DataAccessObject.updateUserStatusById(id, 1);
@@ -428,6 +434,7 @@ public class PlayerHandler extends Thread {
             String name = requestJson.getString("name");
             String id = requestJson.getString("id");
             DataAccessObject.decreaseScoreByNameAndId(name, id);
+            DataAccessObject.updateUserStatusById(id, 1);
         }catch(Exception e){
             e.printStackTrace();
         }
