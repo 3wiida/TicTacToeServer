@@ -372,6 +372,7 @@ public class PlayerHandler extends Thread {
                 this.id = player.getId();
                 this.username = player.getUsername();
                 boolean isStatusUpdated = DataAccessObject.updateUserStatusById(id, 1);
+                playerMapping.put(username, this);
                 sendLoginResponse(true, player, isStatusUpdated);
             } else {
                 sendLoginResponse(false, null, false);
