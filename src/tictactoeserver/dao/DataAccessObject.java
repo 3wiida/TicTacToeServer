@@ -113,19 +113,28 @@ public class DataAccessObject {
         return new int[]{onlinePlayers, offlinePlayers};
     }
     
-    public static void updateScoreByUserNameAndID(String name, String id){
-        if(connection != null){
+    public static void updateScoreByUserNameAndID(String name, String id) {
+        if (connection != null) {
             try {
-                String SQL = "UPDATE PLAYERS SET SCORE += 1 WHERE NAME = ? AND ID = ?";
+                String SQL = "UPDATE PLAYERS SET SCORE = SCORE + 1 WHERE NAME = ? AND ID = ?";
                 PreparedStatement updateStatement = connection.prepareStatement(SQL);
                 updateStatement.setString(1, name);
-                updateStatement.setString(2,id);
-                updateStatement.executeUpdate();
+                updateStatement.setString(2, id);
+                int result = updateStatement.executeUpdate();
+
+                if (result > 0) {
+                    System.out.println("Score updated successfully.");
+                } else {
+                    System.out.println("user not found.");
+                }
             } catch (SQLException e) {
-                System.out.println("can not update score");
+                System.out.println("Cannot update score: ");
             }
+        } else {
+            System.out.println("error in database Database connection in update score function.");
         }
     }
+
     
    
 }
