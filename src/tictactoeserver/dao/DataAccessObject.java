@@ -135,6 +135,23 @@ public class DataAccessObject {
         }
     }
 
-    
+    public static Player authenticateUser(String username, String password) throws SQLException {
+        String query = "SELECT * FROM PLAYERS WHERE NAME = ? AND PASSWORD = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String id = rs.getString("ID");
+                String name = rs.getString("NAME");
+                String userPassword = rs.getString("PASSWORD");
+                int status = rs.getInt("STATUS");
+                int score = rs.getInt("SCORE");
+                return new Player(id, name, userPassword, status, score);
+            }
+        }
+        return null;
+    }
    
 }

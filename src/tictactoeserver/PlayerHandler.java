@@ -60,6 +60,7 @@ public class PlayerHandler extends Thread {
 
                 switch (requestType) {
                     case "login": {
+                        handleLoginRequest(requestJson);
                         break;
                     }
 
@@ -360,5 +361,40 @@ public class PlayerHandler extends Thread {
         String userName = requestJson.getString("name");
         String id = requestJson.getString("id");
         DataAccessObject.updateScoreByUserNameAndID(userName, id);
+    }
+    private void handleLoginRequest(JSONObject requestJson) {
+        try {
+            String username = requestJson.getString("username");
+            String password = requestJson.getString("password");
+
+            Player player = DataAccessObject.authenticateUser(username, password);
+            if (player != null) {
+                this.id = player.getId();
+                this.username = player.getUsername();
+                boolean isStatusUpdated = DataAccessObject.updateUserStatusById(id, 1);
+                sendLoginResponse(true, player, isStatusUpdated);
+            } else {
+                sendLoginResponse(false, null, false);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            sendLoginResponse(false, null, false);
+        }
+    }
+    
+    private void sendLoginResponse(boolean isSuccess, Player player, boolean isStatusUpdated) {
+        JSONObject loginResponse = new JSONObject();
+        loginResponse.put("isOk", isSuccess);
+
+        if (isSuccess && isStatusUpdated) {
+            loginResponse.put("id", player.getId());
+            loginResponse.put("username", player.getUsername());
+            loginResponse.put("score", player.getScore());
+            loginResponse.put("status", player.getStatus());
+        } else {
+            loginResponse.put("error", "Invalid credentials or status update failed");
+        }
+
+        ps.println(loginResponse.toString());
     }
 }
