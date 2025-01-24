@@ -11,58 +11,34 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import tictactoeserver.view.homeScreen.HomeScreenController;
 
 /**
- *
  * @author 3wiida
  */
-public class TicTacToeServer extends Application implements Runnable{
-    
-    
-    private ServerSocket serverSocket;
-    private Thread thread;
-    
+public class TicTacToeServer extends Application{
     @Override
     public void start(Stage primaryStage) {
-        
         try {
-            serverSocket = new ServerSocket(5005);
-            thread = new Thread(this);
-            thread.start();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/view/homeScreen/HomeScreen.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            primaryStage.setOnCloseRequest((e)->{
+                    HomeScreenController.stopServer();
+            });
+            primaryStage.show();
         } catch (IOException ex) {
-            Logger.getLogger(TicTacToeServer.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
-        
-        StackPane root = new StackPane();
-        
-        Scene scene = new Scene(root, 300, 250);
-        
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
     }
-
-   
-    
     public static void main(String[] args) {
         launch(args);
     }
-
-    @Override
-    public void run() {
-        while(true){
-            try {
-                Socket clientSocket = serverSocket.accept();
-                new PlayerHandler(clientSocket);
-            } catch (IOException ex) {
-                Logger.getLogger(TicTacToeServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
     
 }

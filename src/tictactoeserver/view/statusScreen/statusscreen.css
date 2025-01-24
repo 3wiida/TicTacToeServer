@@ -1,0 +1,67 @@
+/*
+ * Written by khaled.
+ */
+
+#headerlbl1,
+#headerlbl2{
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 60px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #225577, 10, 0.5, 2, 2);
+}
+
+#onlineStatuslbl, 
+#offlineStatuslbl{
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 25px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #225577, 10, 0.5, 2, 2);
+}
+
+#stopbtn{
+    -fx-pref-width: 110px;
+    -fx-pref-height: 36px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-background-color: #D02823;
+}
+#stopbtn:hover{
+    -fx-background-color: #941e1b;
+}
+
+#onlineNumlbl,
+#offlineNumlbl{
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #225577, 10, 0.5, 2, 2);
+}
+.chart{
+    -fx-clockwise: false;
+    -fx-pie-label-visible: true;
+    -fx-label-line-lenght: 2;
+    -fx-start-angle: 20;
+    -fx-legend-side: left;
+}
+.chart-pie-label{
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+}
+.chart-content{
+    -fx-padding: 10;
+}
+.default-color0.chart-pie{
+   -fx-pie-color: #009999;
+}
+
+.default-color1.chart-pie{
+    -fx-pie-color: #D02823;
+}

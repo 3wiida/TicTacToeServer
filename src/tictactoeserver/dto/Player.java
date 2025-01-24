@@ -3,26 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dto;
+package tictactoeserver.dto;
 
 /**
  *
  * @author 3wiida
  */
 public class Player {
-    String username;
-    String password;
-    int score;
-    int status;
+    private String id;
+    private String username;
+    private String password;
+    private int score;
+    private int status;
 
-    public Player(String username, String password, int score, int status) {
+    public Player(String id, String username, String password, int score, int status) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.score = score;
         this.status = status;
     }
 
-    
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
     }

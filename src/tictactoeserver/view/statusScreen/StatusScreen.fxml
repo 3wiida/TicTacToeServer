@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="814.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoeserver.view.statusScreen.StatusScreenController">
+    <stylesheets>
+        <URL value="@statusscreen.css" />
+    </stylesheets>
+   <children>
+      <ImageView fitHeight="606.0" fitWidth="814.0" pickOnBounds="true">
+         <image>
+            <Image url="@../../assets/background.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="headerlbl1" layoutX="185.0" layoutY="28.0" text="TIC TAC TEO" />
+      <Label fx:id="headerlbl2" layoutX="275.0" layoutY="112.0" text="SERVER" />
+      <Button fx:id="stopbtn" layoutX="337.0" layoutY="209.0" mnemonicParsing="false" onAction="#onStopClicked" text="STOP" />
+      <ImageView fitHeight="44.0" fitWidth="40.0" layoutX="31.0" layoutY="380.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../assets/Ellipse%208.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="onlineStatuslbl" layoutX="83.0" layoutY="381.0" text="ONLINE PLAYER: " />
+      <ImageView fitHeight="44.0" fitWidth="40.0" layoutX="31.0" layoutY="500.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../assets/Ellipse%209.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="offlineStatuslbl" layoutX="78.0" layoutY="501.0" text="OFFLINE PLAYER: " />
+      <Label fx:id="onlineNumlbl" layoutX="314.0" layoutY="382.0" text="2" />
+      <Label fx:id="offlineNumlbl" layoutX="314.0" layoutY="502.0" text="123" />
+      <PieChart fx:id="pieChart" layoutX="371.0" layoutY="259.0" prefHeight="316.0" prefWidth="384.0" />
+   </children>
+</AnchorPane>
