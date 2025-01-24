@@ -156,7 +156,7 @@ public class DataAccessObject {
                 String userPassword = rs.getString("PASSWORD");
                 int status = rs.getInt("STATUS");
                 int score = rs.getInt("SCORE");
-                return new Player(id, name, userPassword, status, score);
+                return new Player(id, name, userPassword, score, status);
             }
         }
         return null;
