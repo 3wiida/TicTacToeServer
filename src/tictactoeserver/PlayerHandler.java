@@ -11,6 +11,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class PlayerHandler extends Thread {
     private Socket clientSocket;
     private DataInputStream dis;
     private PrintStream ps;
+    private boolean isConnected;
 
     private static Vector<PlayerHandler> players = new Vector<>();
     
@@ -43,6 +45,7 @@ public class PlayerHandler extends Thread {
             dis = new DataInputStream(clientSocket.getInputStream());
             ps = new PrintStream(clientSocket.getOutputStream());
             players.add(this);
+            isConnected = true;
             start();
         } catch (IOException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -51,7 +54,7 @@ public class PlayerHandler extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        while (!clientSocket.isClosed()) {
             try {
                 String msg = dis.readLine();
                 System.out.println(msg);
@@ -117,6 +120,9 @@ public class PlayerHandler extends Thread {
 
             } catch (IOException ex) {
                 Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+                closeConnection();
+            } catch (Exception ex){
+                closeConnection();
             }
         }
     }
@@ -156,7 +162,6 @@ public class PlayerHandler extends Thread {
     private void handleLogoutRequest() {
         try {
             boolean isLogoutSuccess = DataAccessObject.updateUserStatusById(id, 0);
-            System.out.println("logout => " + isLogoutSuccess);
             sendLogoutResponse(isLogoutSuccess);
             if(isLogoutSuccess){
                 players.remove(this);
@@ -341,15 +346,16 @@ public class PlayerHandler extends Thread {
 
     public void closeConnection() {
         try {
+            if (clientSocket != null) {
+                clientSocket.close();
+            }
             if (ps != null) {
                 ps.close();
             }
             if (dis != null) {
                 dis.close();
             }
-            if (clientSocket != null) {
-                clientSocket.close();
-            }
+            System.out.println("connection is closed");
         } catch (IOException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
