@@ -103,7 +103,7 @@ public class DataAccessObject {
                 String offlineQuery = "SELECT COUNT(*) AS OFFLINE_COUNT FROM PLAYERS WHERE STATUS = 0";
 
                 try (PreparedStatement onlineStat = connection.prepareStatement(onlineQuery);
-                     PreparedStatement offlineStat = connection.prepareStatement(offlineQuery)) {
+                    PreparedStatement offlineStat = connection.prepareStatement(offlineQuery)) {
                     ResultSet onlineResult = onlineStat.executeQuery();
                     ResultSet offlineResult = offlineStat.executeQuery();
 
@@ -121,13 +121,12 @@ public class DataAccessObject {
         return new int[]{onlinePlayers, offlinePlayers};
     }
     
-    public static void updateScoreByUserNameAndID(String name, String id) {
+    public static void updateScoreByUserNameAndID(String name) {
         if (connection != null) {
             try {
-                String SQL = "UPDATE PLAYERS SET SCORE = SCORE + 10 WHERE NAME = ? AND ID = ?";
+                String SQL = "UPDATE PLAYERS SET SCORE = SCORE + 10 WHERE NAME = ?";
                 PreparedStatement updateStatement = connection.prepareStatement(SQL);
                 updateStatement.setString(1, name);
-                updateStatement.setString(2, id);
                 int result = updateStatement.executeUpdate();
 
                 if (result > 0) {
@@ -162,12 +161,11 @@ public class DataAccessObject {
         return null;
     }
     
-    public static void decreaseScoreByNameAndId(String name, String id){
+    public static void decreaseScoreByNameAndId(String name){
         try {
-            String sql = "UPDATE PLAYERS SET SCORE = SCORE - 10 WHERE NAME = ? AND ID = ?";
+            String sql = "UPDATE PLAYERS SET SCORE = SCORE - 10 WHERE NAME = ?";
             PreparedStatement statement = connection.prepareCall(sql);
             statement.setString(1, name);
-            statement.setString(2, id);
             statement.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessObject.class.getName()).log(Level.SEVERE, null, ex);
