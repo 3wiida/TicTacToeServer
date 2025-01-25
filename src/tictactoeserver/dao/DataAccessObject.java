@@ -93,7 +93,16 @@ public class DataAccessObject {
         return updateStatement.executeUpdate() > 0;
     }
   
-  
+    public static int getPlayerScore(String username) throws SQLException{
+        PreparedStatement selectStatement = connection.prepareStatement("SELECT SCORE FROM PLAYERS WHERE NAME = ?");
+        selectStatement.setString(1, username);
+        ResultSet rs = selectStatement.executeQuery();
+        if(rs.next()){
+            int score = rs.getInt("SCORE");
+            return score;
+        }
+        return 0;
+    }
     
     public static int[] getPlayersStatistics() {
         int onlinePlayers = 0, offlinePlayers = 0;

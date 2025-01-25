@@ -248,14 +248,18 @@ public class PlayerHandler extends Thread {
     }
 
     private void sendInvitationToOpponent(PlayerHandler host, PlayerHandler opponent) {
-        JSONObject invitation = new JSONObject();
-        invitation.put("type", "invitationRecieved");
-        invitation.put("hostUsername", host.username);
-        invitation.put("hostId", host.id);
-        System.out.println("player handler host score => "+ this.score);
-        invitation.put("hostScore", host.score);
-        System.out.println("invitation is => " + invitation.toString());
-        opponent.ps.println(invitation.toString());
+        try {
+            JSONObject invitation = new JSONObject();
+            invitation.put("type", "invitationRecieved");
+            invitation.put("hostUsername", host.username);
+            invitation.put("hostId", host.id);
+            int score = DataAccessObject.getPlayerScore(host.username);
+            invitation.put("hostScore", score);
+            System.out.println("invitation is => " + invitation.toString());
+            opponent.ps.println(invitation.toString());
+        } catch (SQLException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void handleInvitationRejectedRequest(JSONObject rejection) {
