@@ -29,10 +29,13 @@ public class TicTacToeServer extends Application{
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+            primaryStage.sizeToScene();
             primaryStage.setOnCloseRequest((e)->{
                     HomeScreenController.stopServer();
             });
             primaryStage.show();
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
