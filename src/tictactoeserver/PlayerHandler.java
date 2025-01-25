@@ -320,6 +320,7 @@ public class PlayerHandler extends Thread {
     
     private void handleWithdrawalRequest(JSONObject withdrawal){
         String opponentUsername = withdrawal.getString("to");
+        this.score -= 10;
         try {
             DataAccessObject.updateUserStatusByUsername(username, 1);
             DataAccessObject.updatePlayerScore(username, -10);
