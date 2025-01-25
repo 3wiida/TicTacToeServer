@@ -31,6 +31,7 @@ public class PlayerHandler extends Thread {
 
     private String id;
     private String username;
+    private int score;
     private Socket clientSocket;
     private DataInputStream dis;
     private PrintStream ps;
@@ -119,6 +120,11 @@ public class PlayerHandler extends Thread {
                         break;
                     }
                     
+                    case "onlineGameFinished":{
+                        handleOnlineGameFinished();
+                        break;
+                    }
+                    
                     default: {
                         break;
                     }
@@ -143,6 +149,7 @@ public class PlayerHandler extends Thread {
             if (isInsertionSuccess) {
                 this.id = id;
                 this.username = username;
+                this.score = 500;
                 playerMapping.put(username, this);
             }
             sendRegisterResponse(isInsertionSuccess, username);
@@ -245,7 +252,8 @@ public class PlayerHandler extends Thread {
         invitation.put("type", "invitationRecieved");
         invitation.put("hostUsername", host.username);
         invitation.put("hostId", host.id);
-        invitation.put("hostScore", 350);
+        System.out.println("player handler host score => "+ this.score);
+        invitation.put("hostScore", host.score);
         System.out.println("invitation is => " + invitation.toString());
         opponent.ps.println(invitation.toString());
     }
@@ -383,12 +391,8 @@ public class PlayerHandler extends Thread {
         System.out.println("enter update user");
         String userName = requestJson.getString("name");
         String id = requestJson.getString("id");
-        DataAccessObject.updateScoreByUserNameAndID(userName, id);
-        try {
-            DataAccessObject.updateUserStatusById(id, 1);
-        } catch (SQLException ex) {
-            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        DataAccessObject.updateScoreByUserNameAndID(this.username);
+        this.score += 10;
     }
     private void handleLoginRequest(JSONObject requestJson) {
         try {
@@ -400,6 +404,7 @@ public class PlayerHandler extends Thread {
                 System.out.println("player score => "+ player.getScore());
                 this.id = player.getId();
                 this.username = player.getUsername();
+                this.score = player.getScore();
                 boolean isStatusUpdated = DataAccessObject.updateUserStatusById(id, 1);
                 playerMapping.put(username, this);
                 sendLoginResponse(true, player, isStatusUpdated);
@@ -430,13 +435,22 @@ public class PlayerHandler extends Thread {
     
     
     private void handleDecreaseScoreRequest(JSONObject requestJson){
+        System.out.println("here I'm recieve decrease signal on the server");
         try{
             String name = requestJson.getString("name");
             String id = requestJson.getString("id");
-            DataAccessObject.decreaseScoreByNameAndId(name, id);
-            DataAccessObject.updateUserStatusById(id, 1);
+            DataAccessObject.decreaseScoreByNameAndId(this.username);
+            this.score -= 10;
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+    
+    private void handleOnlineGameFinished(){
+        try {
+            DataAccessObject.updateUserStatusById(this.id, 1);
+        } catch (SQLException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
